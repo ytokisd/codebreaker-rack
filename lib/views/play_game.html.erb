@@ -1,0 +1,9 @@
+<p>play game page</p>
+<p>your current code is <%= @code %> </p>
+<p> guess code </p>
+      <form method="post" action="/play_game/turn_processor">
+        <input name="guess" type="text">
+        <input type="submit" value="Your code goes here">
+      </form>
+
+<p> <%= @game.rack_turn(guess)%> </p>
