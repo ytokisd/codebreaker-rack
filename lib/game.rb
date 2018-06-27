@@ -12,6 +12,10 @@ class Game
     @code = generator
   end
 
+  def secret_code
+    @code
+  end
+
   def generator
     Array.new(4) { rand(1..6) }
   end
@@ -22,10 +26,6 @@ class Game
     @game_end = false
     @hint_avaliable = true
   end
-
-  #def code
-  #  @code
-  #end
 
   def new_game
     game_preparations
@@ -46,8 +46,8 @@ class Game
     @attempts = @processor.attempts_left
   end
 
-  def rack_turn(code, command)
-    @processor.turn_processor(code, command)
+  def rack_turn (command)
+    @processor.turn_processor(secret_code, command)
   end
 
   def win(result)

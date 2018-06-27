@@ -7,7 +7,6 @@ class Racker
   def initialize(env)
     @request = Rack::Request.new(env)
     @game = Game.new
-    @code = @game.generator
   end
 
   def response
@@ -22,14 +21,10 @@ class Racker
       end
     when '/play_game/turn_processor'
         Rack::Response.new do |response|
-        @game.rack_turn(@code, guess)
+        @game.rack_turn(guess)
         response.set_cookie('guess', @request.params['guess'])
         response.redirect('/play_game')
       end
-#      response.redirect('/')
-#      @game.rack_turn(guess)
-#      response.redirect('/play_game.html.erb')
-#      Rack::Response.new(render('play_game.html.erb'))
     else Rack::Response.new('Not Found', 404)
     end
   end
@@ -40,7 +35,7 @@ class Racker
   end
 
   def guess
-     @request.cookies['guess'] || 1111
+     @request.cookies['guess']
   end
 
   def word

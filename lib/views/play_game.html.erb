@@ -1,5 +1,5 @@
 <p>play game page</p>
-<p>your current code is <%= @code %> </p>
+<p>your current code is <%= @game.secret_code %> </p>
 <p> guess code </p>
       <form method="post" action="/play_game/turn_processor">
         <input name="guess" type="text">
