@@ -32,28 +32,36 @@ module CodebreakerRack
 
     def play_action
       if @current_game.present?
-        game_status = @request.session[:game][:status]
-        if @current_game.attempt_available? && STATUS_PLAYING == game_status
-
-          take_hint if @request.session[:game][:use_hint]
-          if @request.post?   
-            if @request.params['answer'].present? && (valid_answer? @request.params['answer'])
-              answer = @request.params['answer'].dup
-              game_result = guess
-              game_status = check_game_status(game_result, game_status)
-              finalize_game game_status
-              add_answer(answer, game_result)
-              reset_user_message
-            else
-              update_user_message 'You have to enter four digits from 1 till 6'
-            end
-          end
-        end
-
-        update_game_status game_status
+        @game_status = @request.session[:game][:status]
+        process_attempt(@game_status)
+        update_game_status @game_status
       end
-      disable_hint_with_condition game_status
+      disable_hint_with_condition @game_status
       generate_response
+    end
+
+    def process_attempt(game_status)
+      if @current_game.attempt_available? && STATUS_PLAYING == game_status
+        take_hint if @request.session[:game][:use_hint]
+        win?
+      end
+    end
+
+    def win?
+      if @request.post?
+        send_answer   
+      end
+    end
+
+    def send_answer
+      return update_user_message 'You have to enter four digits from 1 till 6' unless @request.params['answer']
+      .present? && (valid_answer? @request.params['answer'])
+        answer = @request.params['answer'].dup
+        game_result = guess
+        @game_status = check_game_status(game_result, @game_status)
+        finalize_game @game_status
+        add_answer(answer, game_result)
+        reset_user_message
     end
 
     def hint_action
@@ -64,20 +72,28 @@ module CodebreakerRack
 
     def save_action
       if @request.post?
-        if ( @current_game.present? ) && ( STATUS_WIN == @request.session[:game][:status] ) &&
-            ( @request.params['user_name'].present? ) && ( valid_username? @request.params['user_name'] )
-          save_game_result
-          reset_user_message
-          @request.session[:valid] = true
-          Rack::Response.new do |response|
-            response.redirect('/results')
-          end
-        else
-          @request.session[:valid] = false
-          update_user_message 'Name cannot contain less, then 3 symbols!'
-        end
+        save_processor
       end
       generate_response false
+    end
+
+    def save_processor
+      if ( @current_game.present? ) && ( STATUS_WIN == @request.session[:game][:status] ) &&
+         ( @request.params['user_name'].present? ) && ( valid_username? @request.params['user_name'] )
+        save_game_result
+        reset_user_message
+        @request.session[:valid] = true
+        to_results
+      else
+        @request.session[:valid] = false
+        update_user_message 'Name cannot contain less, then 3 symbols!'
+      end
+    end
+
+    def to_results
+      Rack::Response.new do |response|
+        response.redirect('/results')
+      end
     end
 
     def load_action

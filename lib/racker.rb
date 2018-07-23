@@ -47,15 +47,27 @@ class Racker
   private 
 
   def rack_response(controller = nil, action = nil, template = nil, redirect_url = nil, bind_data = true)
-    controller_result = controller.public_send(action) unless controller.nil?
-    bind_results controller_result if bind_data
-    if redirect_url.nil? || !controller_result[:valid]
-      @template = template
-      Rack::Response.new(view_render)
-    elsif controller.nil? || controller_result[:valid]
-      Rack::Response.new do |response|
-        response.redirect(redirect_url)
-      end
+    @controller_result = controller.public_send(action) unless controller.nil?
+    bind_results @controller_result if bind_data
+    response_handler(controller, template, redirect_url)
+  end
+
+  def response_handler(controller, template, redirect_url)
+    if redirect_url.nil? || !@controller_result[:valid]
+      to_rendered_view(template)
+    elsif controller.nil? || @controller_result[:valid]
+      redirect_to(redirect_url)
+    end
+  end
+
+  def to_rendered_view(template)
+    @template = template
+    Rack::Response.new(view_render)
+  end
+
+  def redirect_to(redirect_url)
+    Rack::Response.new do |response|
+      response.redirect(redirect_url)
     end
   end
 
