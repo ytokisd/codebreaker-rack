@@ -1,0 +1,35 @@
+html
+  head
+    title
+      | Codebreaker Rack App
+    link[href="/css/styles.css" rel="stylesheet" type="text/css"]
+  body
+    #body
+      #header
+        h1
+          | Welcome to the web-version of the Codebreaker!
+      #left-sidebar
+        div
+          b
+            | Main Menu
+        a[href="/"]
+          | Index
+        br
+        a[href="/game/new"]
+          | New game
+        br
+        - if @hint_available == true
+          a[href="/game/hint"]
+            | Take hint
+          br
+        - if @save_game_enabled
+          a[href="/game/save"]
+            | Save results
+          br
+        a[href="/results"]
+          | Load saved results
+        br
+      #content
+        == view_render(template)
+      #footer
+        |  Footer 

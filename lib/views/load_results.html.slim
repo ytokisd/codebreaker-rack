@@ -1,0 +1,28 @@
+- if saved_data.length > 0
+  table.grid
+    tr
+      th
+        | user name
+      th
+        | game status
+      th
+        | attempts left
+      th
+        | hint status
+      th
+        | date/time
+    - saved_data.each do |item|
+      tr
+        td
+          = item[:user_name]
+        td
+          = item[:game_status]
+        td
+          = item[:attempts_count]
+        td
+          = item[:hint]
+        td
+          = item[:date]
+- else
+  strong
+    | There are no data available!

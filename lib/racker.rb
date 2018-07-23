@@ -1,6 +1,6 @@
 require 'codebreaker'
-require 'erb'
 require './lib/controllers/game_controller'
+require 'slim'
  
 class Racker
   def self.call(env)
@@ -38,7 +38,7 @@ class Racker
       rack_response(controller, 'hint_action', nil, '/play', false)
     
     when '/results'
-      rack_response(controller,'load_action', 'load_results')
+      rack_response(controller, 'load_action', 'load_results')
     
     else Rack::Response.new('Not Found', 404)
     end
@@ -79,7 +79,7 @@ class Racker
   end
    
   def view_render(view = 'layout')
-    abs_path = File.expand_path("../views/#{view}.html.erb", __FILE__)
-    ERB.new(File.read(abs_path)).result(binding)
+    abs_path = File.expand_path("../views/#{view}.html.slim", __FILE__)
+      Slim::Template.new(abs_path).render(self)
   end
 end
