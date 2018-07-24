@@ -18,33 +18,7 @@ class Racker
      @controller = CodebreakerRack::GameController.new(@request)
      return not_found unless routes.dig(@request.path).present?
      choice_processor(@request.path) 
-     end    
-  #   case @request.path
-  #   when '/'
-  #     rack_response(nil, nil, 'index', nil, false)
-
-  #   when '/game/new'
-  #     rack_response(controller, 'new_action', nil, '/play', false)
-
-  #   when '/play'
-  #     rack_response(controller, 'play_action', 'game')
-
-  #   when '/game/save'
-  #     if @request.get?
-  #       rack_response(nil, nil, 'save_results', nil, false)
-  #     else
-  #       rack_response(controller, 'save_action', 'save_results', '/results')
-  #     end
-
-  #   when '/game/hint'
-  #     rack_response(controller, 'hint_action', nil, '/play', false)
-    
-  #   when '/results'
-  #     rack_response(controller, 'load_action', 'load_results')
-    
-  #   else Rack::Response.new('Not Found', 404)
-  #   end
-  # end
+     end
 
   def choice_processor(route_name)
     routes.dig(route_name).call
