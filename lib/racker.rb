@@ -14,34 +14,83 @@ class Racker
     @request = Rack::Request.new(env)
   end
    
-  def response
-    controller = CodebreakerRack::GameController.new(@request)
+   def response
+     @controller = CodebreakerRack::GameController.new(@request)
+     return not_found unless routes.dig(@request.path).present?
+     choice_processor(@request.path) 
+     end    
+  #   case @request.path
+  #   when '/'
+  #     rack_response(nil, nil, 'index', nil, false)
+
+  #   when '/game/new'
+  #     rack_response(controller, 'new_action', nil, '/play', false)
+
+  #   when '/play'
+  #     rack_response(controller, 'play_action', 'game')
+
+  #   when '/game/save'
+  #     if @request.get?
+  #       rack_response(nil, nil, 'save_results', nil, false)
+  #     else
+  #       rack_response(controller, 'save_action', 'save_results', '/results')
+  #     end
+
+  #   when '/game/hint'
+  #     rack_response(controller, 'hint_action', nil, '/play', false)
     
-    case @request.path
-    when '/'
-      rack_response(nil, nil, 'index', nil, false)
-
-    when '/game/new'
-      rack_response(controller, 'new_action', nil, '/play', false)
-
-    when '/play'
-      rack_response(controller, 'play_action', 'game')
-
-    when '/game/save'
-      if @request.get?
-        rack_response(nil, nil, 'save_results', nil, false)
-      else
-        rack_response(controller, 'save_action', 'save_results', '/results')
-      end
-
-    when '/game/hint'
-      rack_response(controller, 'hint_action', nil, '/play', false)
+  #   when '/results'
+  #     rack_response(controller, 'load_action', 'load_results')
     
-    when '/results'
-      rack_response(controller, 'load_action', 'load_results')
-    
-    else Rack::Response.new('Not Found', 404)
+  #   else Rack::Response.new('Not Found', 404)
+  #   end
+  # end
+
+  def choice_processor(route_name)
+    routes.dig(route_name).call
+  end
+
+  def routes
+    {
+      '/' => -> { resolve_index },
+      '/game/new'=> (-> { resolve_game_new }),
+      '/play' => (-> { resolve_play }),
+      '/game/save' => (-> { resolve_game_save }),
+      '/game/hint' => (-> { resolve_game_hint }),
+      '/results' => (-> { resolve_results })
+    }
+  end
+
+  def resolve_index
+    rack_response(nil, nil, 'index', nil, false)
+  end
+
+  def resolve_game_new
+    rack_response(@controller, 'new_action', nil, '/play', false)
+  end
+
+  def resolve_play
+    rack_response(@controller, 'play_action', 'game')
+  end
+
+  def resolve_game_save
+    if @request.get?
+      rack_response(nil, nil, 'save_results', nil, false)
+    else
+      rack_response(@controller, 'save_action', 'save_results', '/results')
     end
+  end
+
+  def resolve_game_hint
+    rack_response(@controller, 'hint_action', nil, '/play', false)
+  end
+
+  def resolve_results
+    rack_response(@controller, 'load_action', 'load_results')
+  end
+
+  def not_found
+    Rack::Response.new('Not Found', 404)
   end
   
   private 
