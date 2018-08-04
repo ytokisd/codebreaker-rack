@@ -1,0 +1,35 @@
+span
+  | You have 
+  = attemps_amount
+  |  attempts to guess code. Good luck!
+form[method="post" action="/play"]
+  input[type="text" name="answer" autocomplete="off"]
+  input[type="submit" value="Answer"]
+- if user_message
+  span.error
+    = user_message
+  br
+|  Code: 
+span.code_value
+  = secret_code
+br
+|  Game status: 
+= game_status_text
+br
+- if hint_value
+  |  A hint for you: 
+  = hint_value
+  br
+- if answers.length > 0
+  table.grid
+    tr
+      th
+        | answer
+      th
+        | result
+    - answers.each do |answer|
+      tr
+        td
+          = answer[:answer]
+        td
+          = answer[:result]

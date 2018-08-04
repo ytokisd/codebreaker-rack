@@ -1,0 +1,21 @@
+---
+- :user_name: jack
+  :game_status: Win
+  :attempts_count: 2
+  :hint: Used
+  :date: 06/07/2018 13:42:35
+- :user_name: kiker
+  :game_status: Win
+  :attempts_count: 2
+  :hint: Used
+  :date: 06/07/2018 13:43:14
+- :user_name: kony
+  :game_status: Win
+  :attempts_count: 1
+  :hint: Used
+  :date: 06/07/2018 14:02:35
+- :user_name: Jack
+  :game_status: Win
+  :attempts_count: 1
+  :hint: Saved
+  :date: '08/07/2018 11:43:06'
